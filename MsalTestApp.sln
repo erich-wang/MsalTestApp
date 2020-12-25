@@ -5,13 +5,13 @@ VisualStudioVersion = 16.0.30804.86
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MsalTestApp", "MsalTestApp\MsalTestApp.csproj", "{FF2DB7DC-AF91-4F10-B9FD-B622F5EC439C}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Azure.Core", "..\..\..\..\..\AME\azure-sdk-for-net\sdk\core\Azure.Core\src\Azure.Core.csproj", "{CCDD5C12-8925-4129-824A-C74E4E2F3D4A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Azure.Core", "..\azure-sdk-for-net\sdk\core\Azure.Core\src\Azure.Core.csproj", "{CCDD5C12-8925-4129-824A-C74E4E2F3D4A}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Azure.Identity", "..\..\..\..\..\AME\azure-sdk-for-net\sdk\identity\Azure.Identity\src\Azure.Identity.csproj", "{61720845-6E29-4536-9C1D-EB2D16C7616C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Azure.Identity", "..\azure-sdk-for-net\sdk\identity\Azure.Identity\src\Azure.Identity.csproj", "{61720845-6E29-4536-9C1D-EB2D16C7616C}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Azure.ResourceManager.Compute", "..\..\..\..\..\AME\azure-sdk-for-net\sdk\compute\Azure.ResourceManager.Compute\src\Azure.ResourceManager.Compute.csproj", "{ECB02313-C32E-42DB-83DD-090A14BCA1DE}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Azure.ResourceManager.Compute", "..\azure-sdk-for-net\sdk\compute\Azure.ResourceManager.Compute\src\Azure.ResourceManager.Compute.csproj", "{ECB02313-C32E-42DB-83DD-090A14BCA1DE}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Azure.ResourceManager.Resources", "..\..\..\..\..\AME\azure-sdk-for-net\sdk\resources\Azure.ResourceManager.Resources\src\Azure.ResourceManager.Resources.csproj", "{C1E32B89-23F7-48EC-BC74-EDC37656337D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Azure.ResourceManager.Resources", "..\azure-sdk-for-net\sdk\resources\Azure.ResourceManager.Resources\src\Azure.ResourceManager.Resources.csproj", "{C1E32B89-23F7-48EC-BC74-EDC37656337D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
