@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
@@ -6,6 +6,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Azure.Identity" Version="1.2.0-preview.6" />
+    <ProjectReference Include="..\..\..\..\..\..\AME\azure-sdk-for-net\sdk\core\Azure.Core\src\Azure.Core.csproj" />
+    <ProjectReference Include="..\..\..\..\..\..\AME\azure-sdk-for-net\sdk\identity\Azure.Identity\src\Azure.Identity.csproj" />
+    <ProjectReference Include="..\..\..\..\..\..\AME\azure-sdk-for-net\sdk\resources\Azure.ResourceManager.Resources\src\Azure.ResourceManager.Resources.csproj" />
   </ItemGroup>
 </Project>
