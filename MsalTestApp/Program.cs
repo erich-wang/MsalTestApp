@@ -1,4 +1,9 @@
 ﻿using System;
+using System.Diagnostics;
+using System.Linq;
+using System.Net.Http;
+using System.Net.Http.Headers;
+using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -77,19 +82,71 @@ namespace MsalTestApp
             string tenantId = "54826b22-38d6-4fb2-bad9-b7b93a3e9c5a";
             string[] scopes = new[] { "https://management.azure.com/.default" };
 
-            var credential = new InteractiveBrowserCredential(tenantId, powerShellClientId);
-            var record = credential.Authenticate();
-            var context = new TokenRequestContext(scopes);
-            var token = credential.GetToken(context);
+            var cache = new PersistentTokenCache();
 
-            //NOTE: before executing below line, please set breakpoint at line 185 in InteractiveBrowserCredential.cs,
+            var interOptions = new InteractiveBrowserCredentialOptions()
+            {
+                TenantId = tenantId,
+                ClientId = powerShellClientId,
+                DisableAutomaticAuthentication = true,
+                TokenCache = cache
+            };
+
+            var credential = new InteractiveBrowserCredential(interOptions);//"erichwang@azuresdkteam.onmicrosoft.com"
+            var record = credential.Authenticate();
+            var option = new SharedTokenCacheCredentialOptions(cache);
+            var sharedCredential = new SharedTokenCacheCredential("erichwang@azuresdkteam.onmicrosoft.com", option);
+            var context = new TokenRequestContext(scopes);
+
+            //NOTE: before executing below line, please set breakpoint at line 111 in SharedTokenCacheCredentialOptions.cs,
             //change the value of requestContext.Scopes[0] to "https://management.azure.com/.default"
-            var client = new ResourcesManagementClient(new Uri("https://eastus2euap.management.azure.com/"), "", credential, null);
+            var client = new ResourcesManagementClient(new Uri("https://eastus2euap.management.azure.com/"), "", sharedCredential, null);
             var results = client.Subscriptions.List();
-            foreach(var item in results)
+            foreach (var item in results)
             {
                 Console.WriteLine(item.Id);
             }
+
+            //toke must contain sms claims
+            var firstToken = sharedCredential.GetToken(context).Token;
+            var decodedToken = Base64UrlHelpers.DecodeToString(firstToken.Split('.')[1]);
+            var tokenDocument = System.Text.Json.JsonDocument.Parse(decodedToken);
+            int ssmCount = tokenDocument.RootElement.EnumerateObject()
+                            .Where(p => p.Name == "xms_ssm")
+                            .Count();
+            Debug.Assert(ssmCount == 1);
+
+
+            //Use graph token to revoke current session
+            var graphContext = new TokenRequestContext(new[] { "User.ReadWrite" });
+            var graphToken = sharedCredential.GetToken(graphContext).Token;
+            var httpClient = new HttpClient();
+            var message = new HttpRequestMessage(HttpMethod.Post, "https://graph.microsoft.com/v1.0/me/revokeSignInSessions");
+            message.Headers.Authorization = new AuthenticationHeaderValue("Bearer", graphToken);
+            var result = httpClient.SendAsync(message).ConfigureAwait(false).GetAwaiter().GetResult();
+            Debug.Assert(result.StatusCode == System.Net.HttpStatusCode.OK);
+
+            int seconds = 0;
+            while(seconds <= 600)
+            {
+                seconds += 10;
+                Console.WriteLine($"Waited for {seconds} seconds");
+                Task.Delay(10 * 1000).Wait();
+                client.Subscriptions.List();
+                foreach (var item in results)
+                {
+                    Console.WriteLine(item.Id);
+                }
+
+                var secondToken = sharedCredential.GetToken(context).Token;
+                while(firstToken != secondToken)
+                {
+                    Console.WriteLine("Revoked !!!");
+                    break;
+                }
+            }
+
+            Console.ReadLine();
         }
     }
 }
