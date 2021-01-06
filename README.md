@@ -9,4 +9,4 @@ git clone https://github.com/schaabs/azure-sdk-for-net.git
 git checkout feature/caesupport
 ```
 
- 3. You may need adjust MsalTestApp.sln file to make sure the four Azure.* projects are correctly referenced from Scott branch.
+3. Pay attention to comments at line 101 in Program.cs
