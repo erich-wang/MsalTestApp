@@ -78,7 +78,7 @@ namespace MsalTestApp
 
         static void Main(string[] args)
         {
-            string powerShellClientId = "04b07795-8ddb-461a-bbee-02f9e1bf7b46";
+            string clientId = "04b07795-8ddb-461a-bbee-02f9e1bf7b46";
             string tenantId = "54826b22-38d6-4fb2-bad9-b7b93a3e9c5a";
             string[] scopes = new[] { "https://management.azure.com/.default" };
 
@@ -87,20 +87,25 @@ namespace MsalTestApp
             var interOptions = new InteractiveBrowserCredentialOptions()
             {
                 TenantId = tenantId,
-                ClientId = powerShellClientId,
+                ClientId = clientId,
                 DisableAutomaticAuthentication = true,
                 TokenCache = cache
             };
 
-            var credential = new InteractiveBrowserCredential(interOptions);//"erichwang@azuresdkteam.onmicrosoft.com"
-            var record = credential.Authenticate();
+            var interCredential = new InteractiveBrowserCredential(interOptions);//"erichwang@azuresdkteam.onmicrosoft.com"
+            var record = interCredential.Authenticate();
             var option = new SharedTokenCacheCredentialOptions(cache);
-            var sharedCredential = new SharedTokenCacheCredential("erichwang@azuresdkteam.onmicrosoft.com", option);
+            var credential = new SharedTokenCacheCredential(record.Username, option);
+
             var context = new TokenRequestContext(scopes);
 
-            //NOTE: before executing below line, please set breakpoint at line 111 in SharedTokenCacheCredentialOptions.cs,
+            //var userOptions = new UsernamePasswordCredentialOptions();
+            //var credential = new UsernamePasswordCredential("erichwang@azuresdkteam.onmicrosoft.com", "#Bugsfor$2020", tenantId, clientId, userOptions);
+            //credential.Authenticate();
+
+            //NOTE: before executing below line, please set breakpoint at line 111 in SharedTokenCacheCredential.cs,
             //change the value of requestContext.Scopes[0] to "https://management.azure.com/.default"
-            var client = new ResourcesManagementClient(new Uri("https://eastus2euap.management.azure.com/"), "", sharedCredential, null);
+            var client = new ResourcesManagementClient(new Uri("https://eastus2euap.management.azure.com/"), "", credential, null);
             var results = client.Subscriptions.List();
             foreach (var item in results)
             {
@@ -108,7 +113,7 @@ namespace MsalTestApp
             }
 
             //toke must contain sms claims
-            var firstToken = sharedCredential.GetToken(context).Token;
+            var firstToken = credential.GetToken(context).Token;
             var decodedToken = Base64UrlHelpers.DecodeToString(firstToken.Split('.')[1]);
             var tokenDocument = System.Text.Json.JsonDocument.Parse(decodedToken);
             int ssmCount = tokenDocument.RootElement.EnumerateObject()
@@ -116,15 +121,15 @@ namespace MsalTestApp
                             .Count();
             Debug.Assert(ssmCount == 1);
 
-
-            //Use graph token to revoke current session
-            var graphContext = new TokenRequestContext(new[] { "User.ReadWrite" });
-            var graphToken = sharedCredential.GetToken(graphContext).Token;
-            var httpClient = new HttpClient();
-            var message = new HttpRequestMessage(HttpMethod.Post, "https://graph.microsoft.com/v1.0/me/revokeSignInSessions");
-            message.Headers.Authorization = new AuthenticationHeaderValue("Bearer", graphToken);
-            var result = httpClient.SendAsync(message).ConfigureAwait(false).GetAwaiter().GetResult();
-            Debug.Assert(result.StatusCode == System.Net.HttpStatusCode.OK);
+            ////Use graph token to revoke current session
+            //var graphContext = new TokenRequestContext(new[] { "User.ReadWrite" });
+            //var graphToken = credential.GetToken(graphContext).Token;
+            //var httpClient = new HttpClient();
+            ////var message = new HttpRequestMessage(HttpMethod.Post, "https://graph.microsoft.com/v1.0/me/revokeSignInSessions");
+            //var message = new HttpRequestMessage(HttpMethod.Post, "https://graph.microsoft.com/v1.0/users/erichwang@azuresdkteam.onmicrosoft.com/revokeSignInSessions");
+            //message.Headers.Authorization = new AuthenticationHeaderValue("Bearer", graphToken);
+            //var result = httpClient.SendAsync(message).ConfigureAwait(false).GetAwaiter().GetResult();
+            //Debug.Assert(result.StatusCode == System.Net.HttpStatusCode.OK);
 
             int seconds = 0;
             while(seconds <= 600)
@@ -138,7 +143,7 @@ namespace MsalTestApp
                     Console.WriteLine(item.Id);
                 }
 
-                var secondToken = sharedCredential.GetToken(context).Token;
+                var secondToken = credential.GetToken(context).Token;
                 while(firstToken != secondToken)
                 {
                     Console.WriteLine("Revoked !!!");

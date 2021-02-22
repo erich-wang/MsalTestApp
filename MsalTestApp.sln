@@ -13,6 +13,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Azure.ResourceManager.Compu
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Azure.ResourceManager.Resources", "..\azure-sdk-for-net\sdk\resources\Azure.ResourceManager.Resources\src\Azure.ResourceManager.Resources.csproj", "{C1E32B89-23F7-48EC-BC74-EDC37656337D}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RevokeSessions", "RevokeSessions\RevokeSessions.csproj", "{7D50A4E9-3CF6-4957-9B92-5C9E90AB1E6D}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -39,6 +41,10 @@ Global
 		{C1E32B89-23F7-48EC-BC74-EDC37656337D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C1E32B89-23F7-48EC-BC74-EDC37656337D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C1E32B89-23F7-48EC-BC74-EDC37656337D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7D50A4E9-3CF6-4957-9B92-5C9E90AB1E6D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7D50A4E9-3CF6-4957-9B92-5C9E90AB1E6D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7D50A4E9-3CF6-4957-9B92-5C9E90AB1E6D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7D50A4E9-3CF6-4957-9B92-5C9E90AB1E6D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
